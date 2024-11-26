@@ -1,43 +1,14 @@
-﻿using CognitechnaZadanie.Model;
-using CognitechnaZadanie.Model.Entities;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.SignalR;
 
 namespace CognitechnaZadanie.Hubs
 {
     public class TasksHub : Hub
     {
-        public async Task<IEnumerable<TaskEntity>> GetTasks()
-        {
-            using (TaskContext context = new TaskContext())
-            {
-                try
-                {
-                    return await context.Tasks.ToListAsync();
-                }
-                catch (Exception ex)
-                {
-                    return Enumerable.Empty<TaskEntity>();
-                }
-            }
-        }
+        private readonly IHubContext<TasksHub> _hubContext;
 
-        public async Task SubmitTask(TaskEntity task)
+        public TasksHub(IHubContext<TasksHub> hubContext)
         {
-            using (TaskContext context = new TaskContext())
-            {
-                try
-                {
-                    context.Tasks.Add(task);
-                    await context.SaveChangesAsync();
-                    await Clients.All.SendAsync("TaskCreated", task);
-                }
-                catch (Exception ex)
-                {
-                    
-                }
-            }
-
+            _hubContext = hubContext;
         }
 
     }

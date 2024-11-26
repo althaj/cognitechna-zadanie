@@ -1,8 +1,18 @@
 using CognitechnaZadanie.Hubs;
+using CognitechnaZadanie.Model;
+using Microsoft.AspNetCore.SignalR;
+using TodoApi.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<ITaskContext, TaskContext>();
+builder.Services.AddScoped<TaskAPIController>();
+
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
 
@@ -14,6 +24,11 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+else
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
@@ -33,6 +48,8 @@ app.MapRazorPages();
 //      .SetIsOriginAllowed(origin => true);
 //});
 
-app.MapHub<TasksHub>("/api/tasks");
+app.MapControllers();
+
+app.MapHub<TasksHub>("taskHub");
 
 app.Run();
