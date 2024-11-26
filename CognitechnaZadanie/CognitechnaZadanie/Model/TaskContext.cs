@@ -8,10 +8,14 @@ namespace CognitechnaZadanie.Model
         public async Task Delete(int id)
         {
             TaskEntity? task = await Get(id);
-            if(task != null)
+            if (task != null)
             {
                 Set<TaskEntity>().Remove(task);
                 await SaveChangesAsync();
+            }
+            else
+            {
+                throw new KeyNotFoundException();
             }
         }
 
@@ -35,14 +39,17 @@ namespace CognitechnaZadanie.Model
         public async Task<TaskEntity?> Update(TaskEntity task)
         {
             TaskEntity? trackedTask = await Get(task.Id);
-            if(trackedTask != null)
+            if (trackedTask != null)
             {
                 trackedTask.Title = task.Title;
                 trackedTask.Description = task.Description;
                 await SaveChangesAsync();
                 return trackedTask;
             }
-            return null;
+            else
+            {
+                throw new KeyNotFoundException();
+            }
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)

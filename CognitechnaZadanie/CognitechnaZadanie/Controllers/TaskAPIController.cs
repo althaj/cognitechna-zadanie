@@ -21,54 +21,93 @@ public class TaskAPIController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TaskEntity>>> GetTasks()
     {
-        return Ok(await _dbContext.Get());
+        try
+        {
+            return Ok(await _dbContext.Get());
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<TaskEntity>> GetTask(int id)
     {
-        var task = await _dbContext.Get(id);
-
-        if (task == null)
+        try
         {
-            return NotFound();
-        }
+            var task = await _dbContext.Get(id);
 
-        return task;
+            if (task == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(task);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
     }
-    
+
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateTask(int id, TaskEntity task)
     {
         if (id != task.Id)
         {
-            return BadRequest();
+            return BadRequest("Id and task.Id are not equal.");
         }
 
-        var taskResult = await _dbContext.Update(task);
-
-        if (taskResult == null)
+        try
         {
-            return NotFound();
-        }
+            var taskResult = await _dbContext.Update(task);
 
-        return Ok(taskResult);
+            if (taskResult == null)
+            {
+                return NotFound();
+            }
+
+            await _hubContext.Clients.All.SendAsync("TaskUpdated", task);
+
+            return Ok(taskResult);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
     }
-    
+
     [HttpPost]
     public async Task<ActionResult<TaskEntity>> InsertTask(TaskEntity task)
     {
-        var taskResult = await _dbContext.Insert(task);
+        try{
+            var taskResult = await _dbContext.Insert(task);
 
-        await _hubContext.Clients.All.SendAsync("TaskCreated", task);
+            await _hubContext.Clients.All.SendAsync("TaskCreated", task);
 
-        return taskResult; 
+            return taskResult;
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
     }
-    
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteTask(int id)
     {
-        await _dbContext.Delete(id);
-        return Ok();
+        try
+        {
+            await _dbContext.Delete(id);
+
+            await _hubContext.Clients.All.SendAsync("TaskDeleted", id);
+
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
     }
 }
