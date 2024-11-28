@@ -111,7 +111,7 @@ public class TaskAPIController : ControllerBase
         }
     }
 
-    [HttpGet("/process-heavy/{id}")]
+    [HttpGet("process-heavy/{id}")]
     public async Task<IActionResult> ProcessHeavyTask(int id)
     {
         try
