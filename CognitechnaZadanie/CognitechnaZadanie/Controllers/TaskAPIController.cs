@@ -3,7 +3,7 @@ using CognitechnaZadanie.Model.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
-namespace TodoApi.Controllers;
+namespace CognitechnaZadanie.Controllers;
 
 [Route("api/tasks")]
 [ApiController]

@@ -1,20 +1,29 @@
 using CognitechnaZadanie.Hubs;
 using CognitechnaZadanie.Model;
-using Microsoft.AspNetCore.SignalR;
-using TodoApi.Controllers;
+using CognitechnaZadanie.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options => 
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    });
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ITaskContext, TaskContext>();
 builder.Services.AddScoped<TaskAPIController>();
 
-builder.Services.AddRazorPages();
-builder.Services.AddSignalR();
+builder.Services.AddSignalR()
+    .AddJsonProtocol(options =>
+    {
+        options.PayloadSerializerOptions.PropertyNamingPolicy = null;
+    });
+
+builder.Services.AddCors();
 
 var app = builder.Build();
 
@@ -38,15 +47,13 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapRazorPages();
-
-//app.UseCors(options =>
-//{
-//    options.AllowAnyHeader()
-//      .AllowAnyMethod()
-//      .AllowCredentials()
-//      .SetIsOriginAllowed(origin => true);
-//});
+app.UseCors(options =>
+{
+    options.AllowAnyHeader()
+      .AllowAnyMethod()
+      .AllowCredentials()
+      .SetIsOriginAllowed(origin => true);
+});
 
 app.MapControllers();
 
