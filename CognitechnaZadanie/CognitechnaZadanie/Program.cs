@@ -29,7 +29,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("TaskCORSPolicy",
         policy =>
         {
-            policy.AllowAnyHeader();
+            policy.WithOrigins("http://http://localhost:3000/", "https://taskmanagerclient-dza7ajctd2dyg8gw.polandcentral-01.azurewebsites.net").AllowAnyHeader();
         });
 });
 
