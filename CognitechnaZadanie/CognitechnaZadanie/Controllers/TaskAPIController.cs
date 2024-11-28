@@ -110,4 +110,19 @@ public class TaskAPIController : ControllerBase
             return BadRequest(ex);
         }
     }
+
+    [HttpGet("/process-heavy/{id}")]
+    public async Task<IActionResult> ProcessHeavyTask(int id)
+    {
+        try
+        {
+            await Task.Factory.StartNew(() => Thread.Sleep(TimeSpan.FromSeconds(10)));
+
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
+    }
 }
