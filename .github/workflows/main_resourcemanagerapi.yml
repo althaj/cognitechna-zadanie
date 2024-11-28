@@ -6,7 +6,7 @@ name: Build and deploy ASP.Net Core app to Azure Web App - ResourceManagerAPI
 on:
   push:
     branches:
-      - main
+      - deployment/azure
   workflow_dispatch:
 
 jobs:
