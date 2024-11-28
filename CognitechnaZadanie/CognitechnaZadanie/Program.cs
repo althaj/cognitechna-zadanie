@@ -1,6 +1,7 @@
 using CognitechnaZadanie.Hubs;
 using CognitechnaZadanie.Model;
 using CognitechnaZadanie.Controllers;
+using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +24,14 @@ builder.Services.AddSignalR()
         options.PayloadSerializerOptions.PropertyNamingPolicy = null;
     });
 
-builder.Services.AddCors();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("TaskCORSPolicy",
+        policy =>
+        {
+            policy.AllowAnyHeader();
+        });
+});
 
 var app = builder.Build();
 
